@@ -12,17 +12,15 @@ namespace Wizards.GameObjects
     class Wizard : MovingObject
     {
         // ANIMATION & SPELL SELECTION
-        float interval = 2;
         Texture2D tri;
         Vector2 triOrigin;
-        protected float myAngle;
 
         public Wizard(Texture2D texture, Vector2 position, int radius)
             : base(texture, position, radius)
         {
-            this.texture = texture;
-            this.position = position;
-            this.radius = radius;
+            this.m_texture = texture;
+            this.m_vPosition = position;
+            this.m_iRadius = radius;
             this.color = Color.Goldenrod;
             tri = TextureManager.triangle;
             triOrigin = new Vector2(tri.Width / 2, tri.Height / 2);
@@ -30,46 +28,23 @@ namespace Wizards.GameObjects
 
         public override void Update(float time)
         {
-            interval += time;
-
             base.Update(time);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            myAngle = (float)Math.Atan2(m_vVelocity.Y, m_vVelocity.X) + (float)(Math.PI / 2);
+            m_fAngle = (float)Math.Atan2(m_vVelocity.Y, m_vVelocity.X) + (float)(Math.PI / 2);
 
-            spriteBatch.Draw(tri, position, null, Color.Black, myAngle, triOrigin, 1, SpriteEffects.None, 0);
-            Vector2 temp = position + Vector2.Normalize(m_vVelocity) * radius;
-            spriteBatch.Draw(texture, temp, null, Color.Red, 0, origin, 0.4f, SpriteEffects.None, 0);
-
-        }
-
-        public virtual bool isInSpellRange(Vector2 target)
-        {
-            if (Vector2.Distance(position, target) < Settings.RangeCheck)
-            {
-                Vector2 temp = target - position;
-                myAngle = (float)Math.Atan2(temp.Y, temp.X) + (float)(Math.PI / 2);
-
-                if (interval > 2)
-                {
-                    interval = 0;
-                    return true;
-                }
-            }
-            return false;
+            spriteBatch.Draw(tri, m_vPosition, null, Color.Black, m_fAngle, triOrigin, 1, SpriteEffects.None, 0);
+            Vector2 temp = m_vPosition + Vector2.Normalize(m_vVelocity) * m_iRadius;
+            spriteBatch.Draw(m_texture, temp, null, Color.Red, 0, m_vOrigin, 0.4f, SpriteEffects.None, 0);
         }
 
         public void DrawOutOfBoundsArrow(SpriteBatch spriteBatch, GameWindow window)
         {
-            if (myPosition.X > 0 && myPosition.X < window.ClientBounds.Width
-                && myPosition.Y > 0 && myPosition.Y < window.ClientBounds.Height)
-            {
-                // DO NOTHING
-            }
-            else
+            if (myPosition.X < 0 || myPosition.X > window.ClientBounds.Width
+                || myPosition.Y < 0 || myPosition.Y > window.ClientBounds.Height)
             {
                 Vector2 arrowPos;
 
@@ -89,7 +64,7 @@ namespace Wizards.GameObjects
 
                 float angle = (float)Math.Atan2(arrowPos.Y - myPosition.Y, arrowPos.X - myPosition.X) - (float)(Math.PI / 2);
 
-                spriteBatch.Draw(tri, arrowPos, null, color, angle, origin, 1, SpriteEffects.None, 0);
+                spriteBatch.Draw(tri, arrowPos, null, color, angle, m_vOrigin, 1, SpriteEffects.None, 0);
             }
         }
     }

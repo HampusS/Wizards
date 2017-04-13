@@ -20,13 +20,14 @@ namespace Wizards.GameObjects
         public PlayerWizard(Texture2D texture, Vector2 position, int radius)
             : base(texture, position, radius)
         {
-            this.texture = texture;
-            this.position = position;
-            this.radius = radius;
+            this.m_texture = texture;
+            this.m_vPosition = position;
+            this.m_iRadius = radius;
             this.color = Color.Purple;
+            this.m_fFriction = 0.01f;
         }
 
-        public void Initialize(Keys shoot, Keys switchSpellUp, Keys switchSpellDown,
+        public void InitializeKeyBindings(Keys shoot, Keys switchSpellUp, Keys switchSpellDown,
             Keys moveUp, Keys moveLeft, Keys moveDown, Keys moveRight, Color color)
         {
             this.shoot = shoot;

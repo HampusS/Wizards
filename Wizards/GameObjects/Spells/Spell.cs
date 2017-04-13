@@ -12,7 +12,6 @@ namespace Wizards.Interfaces
     class Spell : MovingObject
     {
         float speed = 200;
-        bool alive = true;
 
         float lifetime = 4, lifecounter;
 
@@ -21,17 +20,12 @@ namespace Wizards.Interfaces
             lifecounter = 200;
         }
 
-        public bool isAlive()
-        {
-            return alive;
-        }
-
         public Spell(Texture2D texture, Vector2 position, int radius, Vector2 direction)
             : base(texture, position, radius)
         {
-            this.texture = texture;
-            this.position = position;
-            this.radius = radius;
+            this.m_texture = texture;
+            this.m_vPosition = position;
+            this.m_iRadius = radius;
             this.m_vVelocity = direction * speed;
             color = Color.BlanchedAlmond;
             m_fFriction = 0;
@@ -53,7 +47,7 @@ namespace Wizards.Interfaces
 
         public void GiveImpulse(MovingObject targetObj)
         {
-            Vector2 normal = targetObj.myPosition - position;
+            Vector2 normal = targetObj.myPosition - m_vPosition;
             normal.Normalize();
             targetObj.myVelocity += -Vector2.Reflect(m_vVelocity * m_fMass, normal);
             alive = false;

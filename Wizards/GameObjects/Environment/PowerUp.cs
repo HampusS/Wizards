@@ -8,11 +8,18 @@ using System.Threading.Tasks;
 
 namespace Wizards.GameObjects.Environment
 {
-    class Obstacle : GameObject
+    class PowerUp : GameObject
     {
+        public enum PowerType
+        {
+            FireBall,
+            FrostBall,
+            ArcaneOrb,
+        }
+        public PowerType m_eType;
 
-        public Obstacle(Texture2D texture, Vector2 position, int radius) 
-            :base(texture, position, radius)
+        public PowerUp(Texture2D texture, Vector2 position, int radius) 
+            : base(texture, position, radius)
         {
             this.m_texture = texture;
             this.m_vPosition = position;
@@ -28,6 +35,5 @@ namespace Wizards.GameObjects.Environment
         {
             base.Draw(spriteBatch);
         }
-
     }
 }

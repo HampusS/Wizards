@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="Game1.cs" />
     <Compile Include="GameObjects\Environment\Obstacle.cs" />
+    <Compile Include="GameObjects\Environment\PowerUp.cs" />
     <Compile Include="GameObjects\MovingObject.cs" />
     <Compile Include="GameObjects\Wizards\AIWizard.cs" />
     <Compile Include="GameObjects\GameObject.cs" />

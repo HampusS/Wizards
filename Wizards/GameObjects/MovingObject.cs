@@ -11,10 +11,10 @@ namespace Wizards.GameObjects
 {
     class MovingObject : GameObject
     {
-        protected float m_fFriction = Settings.DefaultFriction;
         protected Vector2 m_vVelocity, m_vAcceleration, m_vFuturePosition;
 
         protected float m_fMass, m_fRestitution;
+        protected float m_fFriction = Settings.DefaultFriction;
 
         public Vector2 myVelocity
         {
@@ -29,7 +29,7 @@ namespace Wizards.GameObjects
 
         public override bool CheckCircleCollision(GameObject targetObj)
         {
-            float totalRadius = radius + targetObj.myRadius();
+            float totalRadius = m_iRadius + targetObj.myRadius();
             Vector2 deltaPos = targetObj.myPosition - m_vFuturePosition;
             return totalRadius * totalRadius > (deltaPos.X * deltaPos.X) + (deltaPos.Y * deltaPos.Y);
         }
@@ -45,19 +45,20 @@ namespace Wizards.GameObjects
 
         public void SolveToStaticCircleCollision(GameObject targetObj)
         {
-            float totalRadius = radius + targetObj.myRadius();
-            Vector2 normal = targetObj.myPosition - position;
+            float totalRadius = m_iRadius + targetObj.myRadius();
+            Vector2 normal = targetObj.myPosition - m_vPosition;
             normal.Normalize();
 
-            position = targetObj.myPosition + (-normal * (totalRadius + 0.0001f));
+            m_vPosition = targetObj.myPosition + (-normal * (totalRadius + 0.0001f));
             m_vVelocity = Vector2.Reflect(m_vVelocity * m_fRestitution, -normal);
         }
 
         public override void Update(float time)
         {
-            position += time * (m_vVelocity + (m_vAcceleration * time) / 2);
+            m_vPosition += time * (m_vVelocity + (m_vAcceleration * time) / 2);
             m_vVelocity += (m_vAcceleration * time) - (m_fFriction * m_vVelocity);
-            m_vFuturePosition = position + (m_vVelocity * time) * 2;
+            m_vFuturePosition = m_vPosition + (m_vVelocity * time) * 2;
+            base.Update(time);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
