@@ -12,8 +12,7 @@ namespace Wizards.GameObjects
     class Wizard : MovingObject
     {
         // ANIMATION & SPELL SELECTION
-        Texture2D tri;
-        Vector2 triOrigin;
+        // add randomized powerup behaviors with a timer 
 
         public Wizard(Texture2D texture, Vector2 position, int radius)
             : base(texture, position, radius)
@@ -22,8 +21,6 @@ namespace Wizards.GameObjects
             this.m_vPosition = position;
             this.m_iRadius = radius;
             this.color = Color.Goldenrod;
-            tri = TextureManager.triangle;
-            triOrigin = new Vector2(tri.Width / 2, tri.Height / 2);
         }
 
         public override void Update(float time)
@@ -34,11 +31,6 @@ namespace Wizards.GameObjects
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            m_fAngle = (float)Math.Atan2(m_vVelocity.Y, m_vVelocity.X) + (float)(Math.PI / 2);
-
-            spriteBatch.Draw(tri, m_vPosition, null, Color.Black, m_fAngle, triOrigin, 1, SpriteEffects.None, 0);
-            Vector2 temp = m_vPosition + Vector2.Normalize(m_vVelocity) * m_iRadius;
-            spriteBatch.Draw(m_texture, temp, null, Color.Red, 0, m_vOrigin, 0.4f, SpriteEffects.None, 0);
         }
 
         public void DrawOutOfBoundsArrow(SpriteBatch spriteBatch, GameWindow window)
@@ -62,9 +54,7 @@ namespace Wizards.GameObjects
                 else
                     arrowPos.Y = myPosition.Y;
 
-                float angle = (float)Math.Atan2(arrowPos.Y - myPosition.Y, arrowPos.X - myPosition.X) - (float)(Math.PI / 2);
-
-                spriteBatch.Draw(tri, arrowPos, null, color, angle, m_vOrigin, 1, SpriteEffects.None, 0);
+                spriteBatch.Draw(tri, arrowPos, null, color, m_fAngle + (float)(Math.PI / 2), m_vOrigin, 1, SpriteEffects.None, 0);
             }
         }
     }

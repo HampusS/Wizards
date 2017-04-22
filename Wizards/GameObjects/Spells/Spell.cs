@@ -11,6 +11,7 @@ namespace Wizards.Interfaces
 {
     class Spell : MovingObject
     {
+        GameObject m_gOwner;
         float speed = 200;
 
         float lifetime = 4, lifecounter;
@@ -20,16 +21,40 @@ namespace Wizards.Interfaces
             lifecounter = 200;
         }
 
-        public Spell(Texture2D texture, Vector2 position, int radius, Vector2 direction)
+        public GameObject getMyParent()
+        {
+            return m_gOwner;
+        }
+
+        public Spell(Texture2D texture, Vector2 position, int radius, Vector2 target, GameObject parent)
             : base(texture, position, radius)
         {
             this.m_texture = texture;
             this.m_vPosition = position;
             this.m_iRadius = radius;
+            this.m_gOwner = parent;
+            Vector2 direction = target - position;
+            direction.Normalize();
+            m_fAngle = (float)Math.Atan2(direction.Y, direction.X);
             this.m_vVelocity = direction * speed;
             color = Color.BlanchedAlmond;
-            m_fFriction = 0;
-            m_fMass = 1.5f;
+            m_fFriction = 1;
+            m_fMass = 15f;
+            TurnToVector(target);
+        }
+
+        public Spell(Texture2D texture, Vector2 position, int radius, GameObject parent)
+            : base(texture, position, radius)
+        {
+            this.m_texture = texture;
+            this.m_vPosition = position;
+            this.m_iRadius = radius;
+            this.m_gOwner = parent;
+            this.m_fAngle = parent.getAngle();
+            this.m_vVelocity = new Vector2((float)Math.Cos(m_fAngle), (float)Math.Sin(m_fAngle)) * speed;
+            color = Color.BlanchedAlmond;
+            m_fFriction = 1;
+            m_fMass = 15f;
         }
 
         public override void Update(float time)
@@ -43,14 +68,6 @@ namespace Wizards.Interfaces
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-        }
-
-        public void GiveImpulse(MovingObject targetObj)
-        {
-            Vector2 normal = targetObj.myPosition - m_vPosition;
-            normal.Normalize();
-            targetObj.myVelocity += -Vector2.Reflect(m_vVelocity * m_fMass, normal);
-            alive = false;
         }
     }
 }

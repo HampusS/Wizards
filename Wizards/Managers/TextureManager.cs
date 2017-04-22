@@ -16,7 +16,7 @@ namespace Wizards.Utilities
         {
             square = createSolidRectangle(Settings.TileSize, Settings.TileSize, graphicsDevice);
             circle = createCircleText(graphicsDevice, Settings.circleRadius * 2);
-            triangle = createSolidTriangle(Settings.TileSize, Settings.TileSize, graphicsDevice);
+            triangle = createSolidTriangle(Settings.TileSize, (int)(Settings.TileSize * 1.25f), graphicsDevice);
         }
 
         static Texture2D createCircleText(GraphicsDevice graphicsDevice, int radius)

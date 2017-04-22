@@ -59,7 +59,7 @@
     <Compile Include="TileGrid\Void.cs" />
     <Compile Include="Utilities\KeyMouseReader.cs" />
     <Compile Include="Utilities\Pathfinder.cs" />
-    <Compile Include="Utilities\Physics.cs" />
+    <Compile Include="Utilities\Calculate.cs" />
     <Compile Include="Utilities\Settings.cs" />
     <Compile Include="Managers\TextureManager.cs" />
   </ItemGroup>

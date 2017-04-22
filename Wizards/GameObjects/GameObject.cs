@@ -17,12 +17,19 @@ namespace Wizards.GameObjects
         protected Color color;
         protected float m_fInterval = 2;
         protected float m_fAngle;
+        protected float m_fRestitution = 1;
 
-        protected float scale = 1, maxScale = 1.0f, minScale = 0.9f;
+        protected float scale = 1, maxScale = 1.0f, minScale = 0.85f;
         protected float lerpTime;
         protected bool grow;
         protected bool alive = true;
+        protected Texture2D tri;
+        protected Vector2 triOrigin;
 
+        public float getAngle()
+        {
+            return m_fAngle;
+        }
 
         public bool isAlive
         {
@@ -30,7 +37,12 @@ namespace Wizards.GameObjects
             set { alive = value; }
         }
 
-        public int myRadius()
+        public float getRestitution()
+        {
+            return m_fRestitution;
+        }
+
+        public int getRadius()
         {
             return m_iRadius;
         }
@@ -47,20 +59,15 @@ namespace Wizards.GameObjects
             set { color = value; }
         }
 
-        public virtual bool CheckCircleCollision(GameObject targetObj)
-        {
-            float totalRadius = m_iRadius + targetObj.myRadius();
-            Vector2 deltaPos = targetObj.myPosition - m_vPosition;
-            return totalRadius * totalRadius > (deltaPos.X * deltaPos.X) + (deltaPos.Y * deltaPos.Y);
-        }
-
         public GameObject(Texture2D texture, Vector2 position, int radius)
         {
             this.m_texture = texture;
             this.m_vPosition = position;
             this.m_iRadius = radius;
-            color = Color.Blue;
+            color = Color.SkyBlue;
             m_vOrigin = new Vector2(texture.Width / 2, texture.Height / 2);
+            tri = TextureManager.triangle;
+            triOrigin = new Vector2(tri.Width / 2, tri.Height / 2);
         }
 
         public virtual void Update(float time)
@@ -71,15 +78,13 @@ namespace Wizards.GameObjects
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(m_texture, m_vPosition, null, color, m_fAngle, m_vOrigin, scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(tri, m_vPosition, null, Color.Black, m_fAngle + (float)(Math.PI / 2), triOrigin, 0.9f, SpriteEffects.None, 0);
         }
 
         public virtual bool isInRange(Vector2 target, int tileRange)
         {
             if (Vector2.Distance(m_vPosition, target) < Settings.TileSize * tileRange)
-            {
-                TurnToVector(target);
                 return true;
-            }
             return false;
         }
 
@@ -96,12 +101,18 @@ namespace Wizards.GameObjects
         public virtual void TurnToVector(Vector2 target)
         {
             Vector2 temp = target - m_vPosition;
-            m_fAngle = (float)Math.Atan2(temp.Y, temp.X) + (float)(Math.PI / 2);
+            m_fAngle = (float)Math.Atan2(temp.Y, temp.X);
         }
 
-        public float LerpSize(float value1, float value2, float amount)
+        public float LerpFloat(float value1, float value2, float amount)
         {
-            return (float)(value1 * (1.0 - amount)) + (value2 * amount);
+            return (value1 * (1.0f - amount)) + (value2 * amount);
+        }
+
+        public void ResetScale()
+        {
+            if (scale < 1)
+                scale += 0.01f;
         }
 
         public void AnimateMe(float time)
@@ -112,11 +123,11 @@ namespace Wizards.GameObjects
                 grow = false;
 
             if (grow)
-                lerpTime += time * 8;
+                lerpTime += time * 1;
             else
-                lerpTime -= time * 4;
+                lerpTime -= time * 1;
 
-            scale = LerpSize(minScale, maxScale, lerpTime);
+            scale = LerpFloat(minScale, maxScale, lerpTime);
         }
     }
 }

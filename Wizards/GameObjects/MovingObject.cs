@@ -11,9 +11,16 @@ namespace Wizards.GameObjects
 {
     class MovingObject : GameObject
     {
-        protected Vector2 m_vVelocity, m_vAcceleration, m_vFuturePosition;
+        public enum MoveState
+        {
+            Acceleration,
+            Impulse,
+        }
+        public MoveState moveState = MoveState.Acceleration;
 
-        protected float m_fMass, m_fRestitution;
+        protected Vector2 m_vVelocity, m_vAcceleration;
+
+        protected float m_fMass;
         protected float m_fFriction = Settings.DefaultFriction;
 
         public Vector2 myVelocity
@@ -22,42 +29,30 @@ namespace Wizards.GameObjects
             set { m_vVelocity = value; }
         }
 
-        public Vector2 myFuturePosition
+        public float myFriction
         {
-            get { return m_vFuturePosition; }
+            get { return m_fFriction; }
+            set { m_fFriction = value; }
         }
 
-        public override bool CheckCircleCollision(GameObject targetObj)
+        public float getMass()
         {
-            float totalRadius = m_iRadius + targetObj.myRadius();
-            Vector2 deltaPos = targetObj.myPosition - m_vFuturePosition;
-            return totalRadius * totalRadius > (deltaPos.X * deltaPos.X) + (deltaPos.Y * deltaPos.Y);
+            return m_fMass;
         }
 
         public MovingObject(Texture2D texture, Vector2 position, int radius)
             : base(texture, position, radius)
         {
             m_vAcceleration = Vector2.Zero;
-            m_vFuturePosition = position;
             this.m_fMass = 10;
             this.m_fRestitution = 1;
-        }
-
-        public void SolveToStaticCircleCollision(GameObject targetObj)
-        {
-            float totalRadius = m_iRadius + targetObj.myRadius();
-            Vector2 normal = targetObj.myPosition - m_vPosition;
-            normal.Normalize();
-
-            m_vPosition = targetObj.myPosition + (-normal * (totalRadius + 0.0001f));
-            m_vVelocity = Vector2.Reflect(m_vVelocity * m_fRestitution, -normal);
         }
 
         public override void Update(float time)
         {
             m_vPosition += time * (m_vVelocity + (m_vAcceleration * time) / 2);
-            m_vVelocity += (m_vAcceleration * time) - (m_fFriction * m_vVelocity);
-            m_vFuturePosition = m_vPosition + (m_vVelocity * time) * 2;
+            m_vVelocity += (m_vAcceleration * time);
+            m_vVelocity *= m_fFriction;
             base.Update(time);
         }
 
@@ -66,7 +61,7 @@ namespace Wizards.GameObjects
             base.Draw(spriteBatch);
         }
 
-        public void InitializePhysics(float mass, float restitution)
+        public void SetPhysics(float mass, float restitution)
         {
             this.m_fMass = mass;
             this.m_fRestitution = restitution;

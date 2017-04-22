@@ -16,57 +16,96 @@ namespace Wizards.Managers
 {
     class GamePlayManager
     {
+        GameWindow window;
         Grid grid;
         PlayerWizard player1, player2;
 
         List<PowerUp> powerUps = new List<PowerUp>();
         List<Spell> spells = new List<Spell>();
-        GameWindow window;
 
         public GamePlayManager(GameWindow window)
         {
             grid = new Grid(TextureManager.square, Settings.TileSize, Settings.gridWidth, Settings.gridHeight);
-            powerUps.Add(new PowerUp(TextureManager.circle, new Vector2(300, 250), Settings.circleRadius));
-            powerUps[0].myPosition = grid.ReturnTileCenter(powerUps[0].myPosition);
-            player1 = new PlayerWizard(TextureManager.circle, new Vector2(50, window.ClientBounds.Height / 2), Settings.circleRadius);
-            player1.InitializeKeyBindings(Keys.Space, Keys.Q, Keys.E, Keys.W, Keys.A, Keys.S, Keys.D, Color.LightPink);
-            player1.InitializePhysics(10, 1);
-            player2 = new PlayerWizard(TextureManager.circle, new Vector2(window.ClientBounds.Width - 50, window.ClientBounds.Height / 2), Settings.circleRadius);
-            player2.InitializeKeyBindings(Keys.M, Keys.K, Keys.L, Keys.Up, Keys.Left, Keys.Down, Keys.Right, Color.LightGreen);
-            player2.InitializePhysics(30, 1);
+            powerUps.Add(new PowerUp(TextureManager.circle, grid.getGridCenter(), Settings.circleRadius));
+            player1 = new PlayerWizard(TextureManager.circle, grid.RandomizePosFromCenter(9), Settings.circleRadius);
+            player1.TurnToVector(grid.getGridCenter());
+            player1.SetKeyBindings(Keys.Space, Keys.W, Keys.A, Keys.S, Keys.D, Color.LightPink);
+            player1.SetPhysics(1, 0.8f);
+            player2 = new PlayerWizard(TextureManager.circle, grid.RandomizePosFromCenter(9), Settings.circleRadius);
+            player2.TurnToVector(grid.getGridCenter());
+            player2.SetKeyBindings(Keys.M, Keys.Up, Keys.Left, Keys.Down, Keys.Right, Color.LightGreen);
+            player2.SetPhysics(1, 0.8f);
             this.window = window;
         }
 
         public void Update(float time)
         {
-            player1.Update(time);
-            player2.Update(time);
+            UpdateObjects(time);
+
+            Collisions(time);
+
+            RemoveDeadObjects();
+        }
+
+        private void Collisions(float time)
+        {
+            grid.SetFrictionToObject(player1);
+            grid.SetFrictionToObject(player2);
+            if (Calculate.CheckCircleCollision(player1, player2))
+                Calculate.SolveToMovingCircleCollision(player1, player2);
+
+            if(player1.flagInputShot())
+                if(player1.isReadyToShoot())
+                {
+                    spells.Add(new Spell(TextureManager.circle, player1.myPosition, 16, player1));
+                }
 
             foreach (PowerUp pup in powerUps)
             {
                 PlayerWizard tempWiz = player1;
                 if (Vector2.Distance(player1.myPosition, pup.myPosition) > Vector2.Distance(player2.myPosition, pup.myPosition))
                     tempWiz = player2;
-                if (pup.isInRange(tempWiz.myPosition, 4))
+                //Set a range in # of tiles
+                if (pup.isInRange(tempWiz.myPosition, 7))
                 {
+                    pup.TurnToVector(tempWiz.myPosition);
                     if (pup.isReadyToShoot())
-                        CreateSpell(pup.myPosition, tempWiz.myFuturePosition);
-
+                        CreateSpell(pup, pup.myPosition);
                     pup.AnimateMe(time);
                 }
-                if (player1.CheckCircleCollision(pup))
-                    pup.isAlive = false;
-                if (player2.CheckCircleCollision(pup))
-                    pup.isAlive = false;
+                else
+                    pup.ResetScale();
+                if (Calculate.CheckCircleCollision(pup, player1))
+                {
+                    //pup.isAlive = false;
+                    Calculate.SolveToStaticCircleCollision(player1, pup);
+                }
+                if (Calculate.CheckCircleCollision(pup, player2))
+                    Calculate.SolveToStaticCircleCollision(player2, pup);
             }
 
             foreach (Spell spell in spells)
             {
-                if (player1.CheckCircleCollision(spell))
-                    spell.GiveImpulse(player1);
-                if (player2.CheckCircleCollision(spell))
-                    spell.GiveImpulse(player2);
+                if (spell.getMyParent() != player1)
+                {
+                    if (Calculate.CheckCircleCollision(spell, player1))
+                    {
+                        Calculate.SolveToMovingCircleCollision(player1, spell);
+                        spell.isAlive = false;
+                    }
+                }
+                if (Calculate.CheckCircleCollision(spell, player2))
+                {
+                    Calculate.SolveToMovingCircleCollision(player2, spell);
+                    spell.isAlive = false;
+                }
             }
+        }
+
+        private void UpdateObjects(float time)
+        {
+            player1.Update(time);
+            player2.Update(time);
 
             foreach (PowerUp pup in powerUps)
             {
@@ -77,7 +116,10 @@ namespace Wizards.Managers
             {
                 spell.Update(time);
             }
+        }
 
+        private void RemoveDeadObjects()
+        {
             for (int i = spells.Count - 1; i >= 0; i--)
             {
                 if (!spells[i].isAlive)
@@ -93,9 +135,6 @@ namespace Wizards.Managers
 
         public void Draw(SpriteBatch spriteBatch)
         {
-
-            grid.DrawOccupiedTile(player1.myPosition, player1.myFuturePosition);
-            grid.DrawOccupiedTile(player2.myPosition, player2.myFuturePosition);
             grid.Draw(spriteBatch);
             player1.Draw(spriteBatch);
             player2.Draw(spriteBatch);
@@ -112,11 +151,9 @@ namespace Wizards.Managers
 
         }
 
-        public void CreateSpell(Vector2 position, Vector2 target)
+        public void CreateSpell(GameObject parent, Vector2 spawnPos)
         {
-            Vector2 direction = target - position;
-            direction.Normalize();
-            spells.Add(new Spell(TextureManager.circle, position, 16, direction));
+            spells.Add(new Spell(TextureManager.circle, spawnPos, 16, parent));
         }
     }
 }
