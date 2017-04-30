@@ -12,29 +12,51 @@ namespace Wizards.GameObjects
     class GameObject
     {
         protected Texture2D m_texture;
-        protected Vector2 m_vPosition, m_vOrigin;
+        protected Vector2 m_vPosition, 
+            m_vOrigin;
         protected int m_iRadius;
         protected Color color;
-        protected float m_fInterval = 2;
+        protected float m_fInterval = 1.5f;
+        protected float m_fIntervalLimit = 1.5f;
         protected float m_fAngle;
         protected float m_fRestitution = 1;
 
-        protected float scale = 1, maxScale = 1.0f, minScale = 0.85f;
-        protected float lerpTime;
-        protected bool grow;
+        protected float m_fScale = 1;
+
         protected bool alive = true;
         protected Texture2D tri;
         protected Vector2 triOrigin;
 
-        public float getAngle()
+        public bool CanShoot;
+
+        protected float m_fStrength, m_fStrengthLimit;
+        protected float m_fMass;
+
+        protected float defaultRadius = Settings.circleRadius;
+        protected float scaleModifier;
+
+        public float myIntervalLimit
         {
-            return m_fAngle;
+            get { return m_fIntervalLimit; }
+            set { m_fIntervalLimit = value; }
         }
 
-        public bool isAlive
+        public float myMass
         {
-            get { return alive; }
-            set { alive = value; }
+            get { return m_fMass; }
+            set { m_fMass = value; }
+        }
+
+        public float myStrength
+        {
+            get { return m_fStrength; }
+            private set { m_fStrength = value; }
+        }
+
+        public float myAngle
+        {
+            get { return m_fAngle; }
+            set { m_fAngle = value; }
         }
 
         public float getRestitution()
@@ -45,6 +67,18 @@ namespace Wizards.GameObjects
         public int getRadius()
         {
             return m_iRadius;
+        }
+
+        public bool isAlive
+        {
+            get { return alive; }
+            set { alive = value; }
+        }
+
+        public float mySize
+        {
+            get { return m_fScale; }
+            set { m_fScale = value; }
         }
 
         public Vector2 myPosition
@@ -68,6 +102,8 @@ namespace Wizards.GameObjects
             m_vOrigin = new Vector2(texture.Width / 2, texture.Height / 2);
             tri = TextureManager.triangle;
             triOrigin = new Vector2(tri.Width / 2, tri.Height / 2);
+            m_fStrength = 0.5f;
+            m_fStrengthLimit = 5;
         }
 
         public virtual void Update(float time)
@@ -77,8 +113,7 @@ namespace Wizards.GameObjects
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(m_texture, m_vPosition, null, color, m_fAngle, m_vOrigin, scale, SpriteEffects.None, 0);
-            spriteBatch.Draw(tri, m_vPosition, null, Color.Black, m_fAngle + (float)(Math.PI / 2), triOrigin, 0.9f, SpriteEffects.None, 0);
+            spriteBatch.Draw(m_texture, m_vPosition, null, color, m_fAngle, m_vOrigin, m_fScale, SpriteEffects.None, 0);
         }
 
         public virtual bool isInRange(Vector2 target, int tileRange)
@@ -88,9 +123,9 @@ namespace Wizards.GameObjects
             return false;
         }
 
-        public bool isReadyToShoot()
+        public virtual bool isReadyToShoot()
         {
-            if (m_fInterval > 2)
+            if (m_fInterval > m_fIntervalLimit)
             {
                 m_fInterval = 0;
                 return true;
@@ -102,32 +137,6 @@ namespace Wizards.GameObjects
         {
             Vector2 temp = target - m_vPosition;
             m_fAngle = (float)Math.Atan2(temp.Y, temp.X);
-        }
-
-        public float LerpFloat(float value1, float value2, float amount)
-        {
-            return (value1 * (1.0f - amount)) + (value2 * amount);
-        }
-
-        public void ResetScale()
-        {
-            if (scale < 1)
-                scale += 0.01f;
-        }
-
-        public void AnimateMe(float time)
-        {
-            if (lerpTime < 0 && grow == false)
-                grow = true;
-            else if (lerpTime > 1 && grow == true)
-                grow = false;
-
-            if (grow)
-                lerpTime += time * 1;
-            else
-                lerpTime -= time * 1;
-
-            scale = LerpFloat(minScale, maxScale, lerpTime);
         }
     }
 }

@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Wizards.GameObjects;
+
+namespace Wizards.Utilities
+{
+    class Animation
+    {
+        public GameObject m_goAgent;
+
+        protected float timer, timeLimit;
+
+        public virtual bool isActive()
+        {
+            return false;
+        }
+
+        public Animation(Wizard agent)
+        {
+            m_goAgent = agent;
+        }
+
+        public virtual void Update(float time)
+        {
+            timer += time;
+        }
+
+        public virtual void Enter()
+        {
+
+        }
+
+        public virtual void Exit()
+        {
+
+        }
+    }
+}

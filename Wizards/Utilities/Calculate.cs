@@ -10,7 +10,10 @@ namespace Wizards.Utilities
 {
     class Calculate
     {
-
+        public static float LerpFloat(float value1, float value2, float amount)
+        {
+            return (value1 * (1.0f - amount)) + (value2 * amount);
+        }
 
         public static bool CheckCircleCollision(GameObject lhs, GameObject rhs)
         {
@@ -27,7 +30,7 @@ namespace Wizards.Utilities
 
         public static void GiveImpulse(MovingObject reciever, float strength)
         {
-            Vector2 direction = new Vector2((float)Math.Cos(reciever.getAngle()), (float)Math.Sin(reciever.getAngle()));
+            Vector2 direction = new Vector2((float)Math.Cos(reciever.myAngle), (float)Math.Sin(reciever.myAngle));
             reciever.myVelocity += direction * strength;
         }
 
@@ -40,12 +43,12 @@ namespace Wizards.Utilities
             obj_moving.myVelocity = Vector2.Reflect(obj_moving.myVelocity, collisionNormal) * obj_static.getRestitution();
         }
 
-        public static void SolveToMovingCircleCollision(MovingObject lhs, MovingObject rhs)
+        public static void SolveToMovingCircleCollision(MovingObject lhs, MovingObject rhs, float strength)
         {
             Vector2 deltaPos = Vector2.Subtract(lhs.myPosition, rhs.myPosition);
             float distance = deltaPos.Length();
-            float invMassLhs = 1 / lhs.getMass();
-            float invMassRhs = 1 / rhs.getMass();
+            float invMassLhs = 1 / lhs.myMass;
+            float invMassRhs = 1 / rhs.myMass;
 
             // Move the two objects away from collision
             Vector2 midTransDistance = Vector2.Multiply(deltaPos, (((lhs.getRadius() + rhs.getRadius()) - distance) / distance) + 0.001f);
@@ -59,7 +62,7 @@ namespace Wizards.Utilities
             if (vn <= 0.0)
             {
                 float i = (-(1.0f + (lhs.getRestitution() + rhs.getRestitution()) * vn) / (invMassLhs + invMassRhs));
-                Vector2 impulse = Vector2.Multiply(midTransDistance, i);
+                Vector2 impulse = Vector2.Multiply(midTransDistance, i) * strength;
                 lhs.myVelocity += Vector2.Multiply(impulse, invMassLhs);
                 rhs.myVelocity -= Vector2.Multiply(impulse, invMassRhs);
             }

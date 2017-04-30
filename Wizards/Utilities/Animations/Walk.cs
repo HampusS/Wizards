@@ -1,0 +1,62 @@
+﻿using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Wizards.GameObjects;
+
+namespace Wizards.Utilities.Animations
+{
+    class Walk : Animation
+    {
+        float maxStepDistance,
+            minStepDistance,
+            left,
+            right;
+
+        bool moveLeg = true;
+
+        public Walk(Wizard agent)
+            : base(agent)
+        {
+            this.m_goAgent = agent;
+            maxStepDistance = m_goAgent.getRadius();
+            minStepDistance = m_goAgent.getRadius() * 0.7f;
+            right = maxStepDistance;
+            left = minStepDistance;
+        }
+
+        public override void Update(float time)
+        {
+            if (m_goAgent.Walking())
+            {
+                m_goAgent.m_vLeftFootPos = m_goAgent.myPosition;
+                m_goAgent.m_vRightFootPos = m_goAgent.myPosition;
+
+                if (left <= maxStepDistance && moveLeg)
+                {
+                    left += Calculate.LerpFloat(0, maxStepDistance, time);
+                    right -= Calculate.LerpFloat(0, maxStepDistance, time);
+
+                    if (left > maxStepDistance)
+                        moveLeg = false;
+                }
+                else if (left >= minStepDistance)
+                {
+                    left -= Calculate.LerpFloat(0, maxStepDistance, time);
+                    right += Calculate.LerpFloat(0, maxStepDistance, time);
+
+                    if (left < minStepDistance)
+                        moveLeg = true;
+                }
+
+                m_goAgent.m_vLeftFootPos.X += (float)Math.Cos(m_goAgent.myAngle - 0.35f) * left;
+                m_goAgent.m_vLeftFootPos.Y += (float)Math.Sin(m_goAgent.myAngle - 0.35f) * left;
+                m_goAgent.m_vRightFootPos.X += (float)Math.Cos(m_goAgent.myAngle + 0.35f) * right;
+                m_goAgent.m_vRightFootPos.Y += (float)Math.Sin(m_goAgent.myAngle + 0.35f) * right;
+                base.Update(time);
+            }
+        }
+    }
+}

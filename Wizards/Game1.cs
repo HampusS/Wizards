@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Wizards.GUI;
 using Wizards.Managers;
 using Wizards.TileGrid;
 using Wizards.Utilities;
@@ -12,10 +13,22 @@ namespace Wizards
     /// </summary>
     public class Game1 : Game
     {
+        public enum GameState
+        {
+            MainMenu,
+            GamePlay,
+            WinScreen,
+        }
+        public static GameState game = GameState.MainMenu;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         GamePlayManager gameManager;
+        MainMenuManager menuManager;
+        TextObject title, winner, credit;
+        string gameName = "Push Me Outside", m_sWinner = "The Winner is ", m_sCredits = "Created by Hampus Stromsholm";
+
+        public static bool ExitGame = false;
 
         public Game1()
         {
@@ -34,6 +47,7 @@ namespace Wizards
             // TODO: Add your initialization logic here
             graphics.PreferredBackBufferWidth = Settings.windowWidth;
             graphics.PreferredBackBufferHeight = Settings.windowHeight;
+            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
             base.Initialize();
         }
@@ -46,9 +60,12 @@ namespace Wizards
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            TextureManager.LoadTextures(GraphicsDevice);
-
+            TextureManager.LoadTextures(GraphicsDevice, Content);
             gameManager = new GamePlayManager(Window);
+            menuManager = new MainMenuManager();
+            title = new TextObject(TextureManager.font, new Vector2(Settings.windowWidth / 2, TextureManager.font.MeasureString(gameName).Y * 4), Color.Red, gameName, 7);
+            winner = new TextObject(TextureManager.font, new Vector2(Settings.windowWidth / 2, Settings.windowHeight / 2), Color.Red, m_sWinner, 5);
+            credit = new TextObject(TextureManager.font, new Vector2(TextureManager.font.MeasureString(m_sCredits).X * 1.25f, Settings.windowHeight - TextureManager.font.MeasureString(m_sCredits).Y * 2), Color.Red, m_sCredits, 2);
         }
 
         /// <summary>
@@ -68,10 +85,10 @@ namespace Wizards
         protected override void Update(GameTime gameTime)
         {
             KeyMouseReader.Update();
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-            gameManager.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
+            if (ExitGame)
+                Exit();
+            HandleGameState((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Update(gameTime);
         }
 
@@ -83,11 +100,67 @@ namespace Wizards
         {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
-            //grid.Draw(spriteBatch);
-            gameManager.Draw(spriteBatch);
+
+            switch (game)
+            {
+                case GameState.MainMenu:
+                    title.Draw(spriteBatch);
+                    menuManager.Draw(spriteBatch);
+                    break;
+                case GameState.GamePlay:
+                    gameManager.Draw(spriteBatch);
+                    break;
+                case GameState.WinScreen:
+                    winner.Draw(spriteBatch);
+                    credit.Draw(spriteBatch);
+                    break;
+            }
+
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+
+        void HandleGameState(float time)
+        {
+            switch (game)
+            {
+                case GameState.MainMenu:
+                    menuManager.Update(time);
+
+                    if (KeyMouseReader.keyState.IsKeyDown(Keys.Escape) && KeyMouseReader.oldKeyState.IsKeyUp(Keys.Escape))
+                        Exit();
+                    break;
+                case GameState.GamePlay:
+                    if (menuManager.flagForNewGame)
+                    {
+                        ResetGame();
+                        menuManager.flagForNewGame = false;
+                    }
+                    gameManager.Update(time);
+                    if (gameManager.GameOver())
+                    {
+                        string player = "Player 1";
+                        if (gameManager.player1.myHP == 0)
+                            player = "Player 2";
+                        winner.myAppendedText = player;
+                        winner.RefreshOrigin();
+                        game = GameState.WinScreen;
+                    }
+                    if (KeyMouseReader.keyState.IsKeyDown(Keys.Escape) && KeyMouseReader.oldKeyState.IsKeyUp(Keys.Escape))
+                        game = GameState.MainMenu;
+                    break;
+                case GameState.WinScreen:
+                    if (KeyMouseReader.keyState.IsKeyDown(Keys.Escape) && KeyMouseReader.oldKeyState.IsKeyUp(Keys.Escape))
+                        game = GameState.MainMenu;
+                    break;
+            }
+        }
+
+        public void ResetGame()
+        {
+            gameManager = new GamePlayManager(Window);
         }
     }
 }

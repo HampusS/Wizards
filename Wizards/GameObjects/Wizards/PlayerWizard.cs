@@ -14,8 +14,10 @@ namespace Wizards.GameObjects
     {
         Keys shoot, moveUp, moveLeft, moveDown, moveRight;
 
-        float speedLimit = Settings.WizardStartSpeedLimit;
-        float speed = Settings.WizardStartSpeed;
+        public override bool isReadyToShoot()
+        {
+            return base.isReadyToShoot();
+        }
 
         public PlayerWizard(Texture2D texture, Vector2 position, int radius)
             : base(texture, position, radius)
@@ -56,14 +58,11 @@ namespace Wizards.GameObjects
 
         private void InputMove(float time)
         {
-            bool thrusting = false;
-
 
             if (KeyMouseReader.keyState.IsKeyDown(moveUp))
-                thrusting = true;
+                isWalking = true;
             else
-                m_vAcceleration *= 0;
-
+                isWalking = false;
 
             switch (moveState)
             {
@@ -75,8 +74,10 @@ namespace Wizards.GameObjects
                     m_vAcceleration.X = (float)Math.Cos(m_fAngle);
                     m_vAcceleration.Y = (float)Math.Sin(m_fAngle);
 
-                    if (thrusting)
+                    if (isWalking)
                         m_vAcceleration *= speed;
+                    else
+                        m_vAcceleration *= 0;
                     break;
                 case MoveState.Impulse:
                     if (KeyMouseReader.keyState.IsKeyDown(moveLeft))
@@ -84,15 +85,17 @@ namespace Wizards.GameObjects
                     else if (KeyMouseReader.keyState.IsKeyDown(moveRight))
                         m_fAngle += 0.05f;
 
-                    if (thrusting && m_vVelocity.Length() < 120)
-                        GiveImpulse(60);
+                    if (isWalking && m_vVelocity.Length() < speed)
+                        GiveImpulse(speed * 0.5f);
+                    else
+                        m_vAcceleration *= 0;
                     break;
             }
         }
 
         void GiveImpulse(float strength)
         {
-            Vector2 direction = new Vector2((float)Math.Cos(getAngle()), (float)Math.Sin(getAngle()));
+            Vector2 direction = new Vector2((float)Math.Cos(m_fAngle), (float)Math.Sin(m_fAngle));
             myVelocity += direction * strength;
         }
     }

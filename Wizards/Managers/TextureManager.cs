@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,15 @@ namespace Wizards.Utilities
     class TextureManager
     {
         public static Texture2D square, circle, triangle;
+        public static SpriteFont font;
 
-        public static void LoadTextures(GraphicsDevice graphicsDevice)
+        public static void LoadTextures(GraphicsDevice graphicsDevice, ContentManager Content)
         {
             square = createSolidRectangle(Settings.TileSize, Settings.TileSize, graphicsDevice);
             circle = createCircleText(graphicsDevice, Settings.circleRadius * 2);
-            triangle = createSolidTriangle(Settings.TileSize, (int)(Settings.TileSize * 1.25f), graphicsDevice);
+            triangle = createSolidTriangle(Settings.TileSize, (int)(Settings.TileSize * 1.15f), graphicsDevice);
+            font = Content.Load<SpriteFont>("font");
+
         }
 
         static Texture2D createCircleText(GraphicsDevice graphicsDevice, int radius)
@@ -35,7 +39,7 @@ namespace Wizards.Utilities
                     Vector2 pos = new Vector2(x - diam, y - diam);
                     if (pos.LengthSquared() <= diamsq)
                     {
-                        colorData[index] = new Color(0.7f, 0.7f, 0.7f, 0.8f);
+                        colorData[index] = new Color(0.9f, 0.9f, 0.9f, 1);
                     }
                     else
                     {

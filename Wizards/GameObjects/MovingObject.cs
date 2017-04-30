@@ -11,16 +11,9 @@ namespace Wizards.GameObjects
 {
     class MovingObject : GameObject
     {
-        public enum MoveState
-        {
-            Acceleration,
-            Impulse,
-        }
-        public MoveState moveState = MoveState.Acceleration;
 
         protected Vector2 m_vVelocity, m_vAcceleration;
 
-        protected float m_fMass;
         protected float m_fFriction = Settings.DefaultFriction;
 
         public Vector2 myVelocity
@@ -35,17 +28,13 @@ namespace Wizards.GameObjects
             set { m_fFriction = value; }
         }
 
-        public float getMass()
-        {
-            return m_fMass;
-        }
-
         public MovingObject(Texture2D texture, Vector2 position, int radius)
             : base(texture, position, radius)
         {
             m_vAcceleration = Vector2.Zero;
             this.m_fMass = 10;
             this.m_fRestitution = 1;
+            this.m_fFriction = 0;
         }
 
         public override void Update(float time)

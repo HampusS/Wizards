@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wizards.TileGrid
+namespace Wizards.Utilities.Animations
 {
-    class Void
+    class DeathSequence
     {
     }
 }
