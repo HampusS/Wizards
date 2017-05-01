@@ -26,7 +26,7 @@ namespace Wizards
         GamePlayManager gameManager;
         MainMenuManager menuManager;
         TextObject title, winner, credit;
-        string gameName = "Push Me Outside", m_sWinner = "The Winner is ", m_sCredits = "Created by Hampus Stromsholm";
+        string gameName = "Push Me Outside", m_sWinner = "The Winner is: ", m_sCredits = "Created by Hampus Stromsholm";
 
         public static bool ExitGame = false;
 
@@ -47,7 +47,7 @@ namespace Wizards
             // TODO: Add your initialization logic here
             graphics.PreferredBackBufferWidth = Settings.windowWidth;
             graphics.PreferredBackBufferHeight = Settings.windowHeight;
-            //graphics.IsFullScreen = true;
+            graphics.IsFullScreen = true;
             graphics.ApplyChanges();
             base.Initialize();
         }
@@ -63,9 +63,9 @@ namespace Wizards
             TextureManager.LoadTextures(GraphicsDevice, Content);
             gameManager = new GamePlayManager(Window);
             menuManager = new MainMenuManager();
-            title = new TextObject(TextureManager.font, new Vector2(Settings.windowWidth / 2, TextureManager.font.MeasureString(gameName).Y * 4), Color.Red, gameName, 7);
-            winner = new TextObject(TextureManager.font, new Vector2(Settings.windowWidth / 2, Settings.windowHeight / 2), Color.Red, m_sWinner, 5);
-            credit = new TextObject(TextureManager.font, new Vector2(TextureManager.font.MeasureString(m_sCredits).X * 1.25f, Settings.windowHeight - TextureManager.font.MeasureString(m_sCredits).Y * 2), Color.Red, m_sCredits, 2);
+            title = new TextObject(TextureManager.font, new Vector2(Settings.windowWidth / 2 - (TextureManager.font.MeasureString(gameName).X * 7) / 2, TextureManager.font.MeasureString(gameName).Y * 4), Color.LimeGreen, gameName, 7);
+            winner = new TextObject(TextureManager.font, new Vector2(Settings.windowWidth / 2, Settings.windowHeight / 2), Color.LimeGreen, m_sWinner, 5);
+            credit = new TextObject(TextureManager.font, new Vector2(TextureManager.font.MeasureString(m_sCredits).X * 1.25f, Settings.windowHeight - TextureManager.font.MeasureString(m_sCredits).Y * 2), Color.LimeGreen, m_sCredits, 2);
         }
 
         /// <summary>

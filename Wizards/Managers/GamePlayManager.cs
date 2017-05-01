@@ -21,7 +21,8 @@ namespace Wizards.Managers
         Grid grid;
         public PlayerWizard player1, player2;
 
-        TextObject gui_p1Life, gui_p2Life,
+        TextObject m_toPlayer1, m_toPlayer2,
+            gui_p1Life, gui_p2Life,
             gui_p1ArcanePower, gui_p2ArcanePower;
 
         List<PickUp> pickUps = new List<PickUp>();
@@ -54,8 +55,6 @@ namespace Wizards.Managers
         public void Draw(SpriteBatch spriteBatch)
         {
             grid.Draw(spriteBatch);
-            player1.Draw(spriteBatch);
-            player2.Draw(spriteBatch);
             foreach (PickUp pUp in pickUps)
             {
                 pUp.Draw(spriteBatch);
@@ -69,6 +68,10 @@ namespace Wizards.Managers
             {
                 obst.Draw(spriteBatch);
             }
+            player1.Draw(spriteBatch);
+            player2.Draw(spriteBatch);
+            m_toPlayer1.Draw(spriteBatch);
+            m_toPlayer2.Draw(spriteBatch);
             gui_p1Life.Draw(spriteBatch);
             gui_p2Life.Draw(spriteBatch);
             gui_p1ArcanePower.Draw(spriteBatch);
@@ -103,15 +106,17 @@ namespace Wizards.Managers
             string m_sPower = "Arcane: ";
 
             // Player 1
-            gui_p1Life = new TextObject(TextureManager.font, new Vector2(TextureManager.font.MeasureString(m_sLife).X * 2, TextureManager.font.MeasureString(m_sLife).Y * 2), player1.myColor, m_sLife, 3);
+            m_toPlayer1= new TextObject(TextureManager.font, new Vector2(10, TextureManager.font.MeasureString("Player 1").Y), player1.myColor, "Player 1", 3);
+            gui_p1Life = new TextObject(TextureManager.font, new Vector2(10, TextureManager.font.MeasureString(m_sLife).Y * 4), player1.myColor, m_sLife, 3);
             gui_p1Life.myAppendedText = player1.myHP.ToString();
-            gui_p1ArcanePower = new TextObject(TextureManager.font, new Vector2(TextureManager.font.MeasureString(m_sPower).X * 2, TextureManager.font.MeasureString(m_sPower).Y * 4), player1.myColor, m_sPower, 3);
+            gui_p1ArcanePower = new TextObject(TextureManager.font, new Vector2(10, TextureManager.font.MeasureString(m_sPower).Y * 6), player1.myColor, m_sPower, 3);
             gui_p1ArcanePower.myAppendedText = player1.myStrength.ToString();
 
             // Player 2
-            gui_p2Life = new TextObject(TextureManager.font, new Vector2(Settings.windowWidth - TextureManager.font.MeasureString(m_sLife).X * 3, TextureManager.font.MeasureString(m_sLife).Y * 2), player2.myColor, m_sLife, 3);
+            m_toPlayer2 = new TextObject(TextureManager.font, new Vector2(10, Settings.windowHeight - TextureManager.font.MeasureString("Player 2").Y * 8), player2.myColor, "Player 2", 3);
+            gui_p2Life = new TextObject(TextureManager.font, new Vector2(10, Settings.windowHeight - TextureManager.font.MeasureString(m_sLife).Y * 6), player2.myColor, m_sLife, 3);
             gui_p2Life.myAppendedText = player2.myHP.ToString();
-            gui_p2ArcanePower = new TextObject(TextureManager.font, new Vector2(Settings.windowWidth - TextureManager.font.MeasureString(m_sPower).X * 3, TextureManager.font.MeasureString(m_sPower).Y * 4), player2.myColor, m_sPower, 3);
+            gui_p2ArcanePower = new TextObject(TextureManager.font, new Vector2(10, Settings.windowHeight - TextureManager.font.MeasureString(m_sPower).Y * 4), player2.myColor, m_sPower, 3);
             gui_p2ArcanePower.myAppendedText = player2.myStrength.ToString();
         }
 

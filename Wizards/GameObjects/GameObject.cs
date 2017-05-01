@@ -101,7 +101,7 @@ namespace Wizards.GameObjects
             color = Color.SkyBlue;
             m_vOrigin = new Vector2(texture.Width / 2, texture.Height / 2);
             tri = TextureManager.triangle;
-            triOrigin = new Vector2(tri.Width / 2, tri.Height / 2);
+            triOrigin = new Vector2(TextureManager.hat.Width / 2, 0);
             m_fStrength = 0.5f;
             m_fStrengthLimit = 5;
         }

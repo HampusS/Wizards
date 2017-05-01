@@ -38,6 +38,7 @@ namespace Wizards.GUI
             this.m_sText = text;
             this.m_fSize = size;
             startSize = size;
+            origin = new Vector2(font.MeasureString(m_sText).X / 2, font.MeasureString(m_sText).Y / 2);
         }
 
         public void Update(float time)

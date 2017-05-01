@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wizards.Utilities;
 
 namespace Wizards.GameObjects.Environment
 {
@@ -34,6 +35,11 @@ namespace Wizards.GameObjects.Environment
             this.m_mtType = type;
             rnd = new Random();
             InitializeOnType();
+
+            scaleModifier = (defaultRadius * 2) / m_texture.Width;
+            m_fScale *= scaleModifier;
+            m_vOrigin = new Vector2(m_texture.Width / 2, m_texture.Height / 2);
+
         }
 
         private void InitializeOnType()
@@ -49,12 +55,15 @@ namespace Wizards.GameObjects.Environment
                     break;
                 case myType.MassBoost:
                     color = Color.DeepSkyBlue;
+                    m_texture = TextureManager.solid;
                     break;
                 case myType.RapidFireBoost:
                     color = Color.OrangeRed;
+                    m_texture = TextureManager.dmg;
                     break;
                 case myType.SpeedBoost:
                     color = Color.Yellow;
+                    m_texture = TextureManager.flash;
                     break;
             }
         }

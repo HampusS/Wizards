@@ -11,7 +11,8 @@ namespace Wizards.Utilities
 {
     class TextureManager
     {
-        public static Texture2D square, circle, triangle;
+        public static Texture2D square, circle, triangle, 
+            hat, solid, flash, dmg, frame;
         public static SpriteFont font;
 
         public static void LoadTextures(GraphicsDevice graphicsDevice, ContentManager Content)
@@ -20,7 +21,11 @@ namespace Wizards.Utilities
             circle = createCircleText(graphicsDevice, Settings.circleRadius * 2);
             triangle = createSolidTriangle(Settings.TileSize, (int)(Settings.TileSize * 1.15f), graphicsDevice);
             font = Content.Load<SpriteFont>("font");
-
+            hat = Content.Load<Texture2D>("hat");
+            solid = Content.Load<Texture2D>("strength");
+            flash = Content.Load<Texture2D>("speed");
+            dmg = Content.Load<Texture2D>("damage");
+            frame = Content.Load<Texture2D>("frame");
         }
 
         static Texture2D createCircleText(GraphicsDevice graphicsDevice, int radius)
@@ -83,11 +88,11 @@ namespace Wizards.Utilities
             return texture;
         }
 
-        static Texture2D createSolidTriangle(int width, int height, GraphicsDevice graphicsDevice)
+        static Texture2D createHollowTriangle(int width, int height, GraphicsDevice graphicsDevice)
         {
             Texture2D texture = new Texture2D(graphicsDevice, width, height);
             Color[] data = new Color[width * height];
-            
+
             // Colour the entire texture transparent.             
             for (int i = 0; i < data.Length; i++)
             {
@@ -124,6 +129,31 @@ namespace Wizards.Utilities
             for (int i = width * height - width; i < width * height; i++)
             {
                 data[i] = Color.White;
+            }
+
+            texture.SetData(data);
+            return texture;
+        }
+
+        static Texture2D createSolidTriangle(int width, int height, GraphicsDevice graphicsDevice)
+        {
+            Texture2D texture = new Texture2D(graphicsDevice, width, height);
+            Color[] data = new Color[width * height];
+
+            // Colour the entire texture transparent.             
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] = Color.Transparent;
+            }
+
+            int index = 1;
+            for (int i = width / 2; i < width * height; i += width)
+            {
+                for (int j = 0; j < index; j++)
+                {
+                    data[index+j] = Color.White;
+                }
+                index++;
             }
 
             texture.SetData(data);

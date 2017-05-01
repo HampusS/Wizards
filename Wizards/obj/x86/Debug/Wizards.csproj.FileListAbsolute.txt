@@ -24,3 +24,8 @@ C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\obj\x86\Debug\Wizards.cspro
 C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\obj\x86\Debug\Wizards.exe
 C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\obj\x86\Debug\Wizards.pdb
 C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\font.xnb
+C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\hat.xnb
+C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\damage.xnb
+C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\speed.xnb
+C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\strength.xnb
+C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\frame.xnb

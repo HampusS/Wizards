@@ -32,7 +32,9 @@ namespace Wizards.GameObjects
         // ANIMATION 
         AnimationController animations;
 
-        public Vector2 m_vLeftFootPos, m_vRightFootPos;
+        public Vector2 m_vLeftFootPos, m_vRightFootPos,
+            m_vLeftArmPos, m_vRightArmPos;
+
         protected bool isWalking = false;
 
         protected float speed = Settings.WizardStartSpeed;
@@ -134,7 +136,7 @@ namespace Wizards.GameObjects
                 spriteBatch.Draw(m_texture, m_vRightFootPos, null, Color.DarkKhaki, 0, m_vOrigin, 0.4f, SpriteEffects.None, 0);
             }
             base.Draw(spriteBatch);
-            spriteBatch.Draw(tri, m_vPosition, null, Color.Black, m_fAngle + (float)(Math.PI / 2), triOrigin, 0.9f, SpriteEffects.None, 0);
+            spriteBatch.Draw(TextureManager.hat, m_vPosition, null, Color.White, m_fAngle + (float)(Math.PI / 2), triOrigin, 0.9f, SpriteEffects.None, 0);
         }
 
         private void HandleTaunts()
