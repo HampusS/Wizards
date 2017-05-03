@@ -16,7 +16,7 @@ namespace Wizards.GameObjects
             m_vOrigin;
         protected int m_iRadius;
         protected Color color;
-        protected float m_fInterval = 1.5f;
+        protected float m_fInterval = 0;
         protected float m_fIntervalLimit = 1.5f;
         protected float m_fAngle;
         protected float m_fRestitution = 1;
@@ -102,8 +102,8 @@ namespace Wizards.GameObjects
             m_vOrigin = new Vector2(texture.Width / 2, texture.Height / 2);
             tri = TextureManager.triangle;
             triOrigin = new Vector2(TextureManager.hat.Width / 2, 0);
-            m_fStrength = 0.5f;
-            m_fStrengthLimit = 5;
+            m_fStrength = 0.1f;
+            m_fStrengthLimit = 1;
         }
 
         public virtual void Update(float time)

@@ -29,3 +29,4 @@ C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Conte
 C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\speed.xnb
 C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\strength.xnb
 C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\frame.xnb
+C:\Users\hampz\OneDrive\VisualStudio\Wizards\Wizards\bin\Windows\x86\Debug\Content\circle.xnb

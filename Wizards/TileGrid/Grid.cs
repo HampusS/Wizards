@@ -18,7 +18,7 @@ namespace Wizards.TileGrid
         Texture2D texture;
         Tile[,] grid;
         int size;
-        float fallOff = 0.8f;
+        float fallOff = Settings.MapFallOffRange;
         Random rnd;
         Vector2 m_vCenter;
 

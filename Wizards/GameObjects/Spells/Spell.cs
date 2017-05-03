@@ -6,43 +6,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Wizards.GameObjects;
+using Wizards.ParticleEngine.Emitters;
+using Wizards.Utilities;
 
 namespace Wizards.Interfaces
 {
     class Spell : MovingObject
     {
-        public Wizard m_gOwner;
+        public GameObject m_gOwner;
         float speed = 200;
 
-        float lifetime = 7, lifecounter;
+        ArcaneEmitter emitter;
 
-        public void KillMe()
-        {
-            lifecounter = 200;
-        }
-
-        public Wizard getMyParent()
+        public GameObject getMyParent()
         {
             return m_gOwner;
         }
 
-        public Spell(Texture2D texture, Vector2 position, int radius, Vector2 target)
-            : base(texture, position, radius)
-        {
-            this.m_texture = texture;
-            this.m_vPosition = position;
-            this.m_iRadius = radius;
-            this.m_gOwner = null;
-            TurnToVector(target);
-            this.m_vVelocity = new Vector2((float)Math.Cos(m_fAngle), (float)Math.Sin(m_fAngle)) * speed;
-            color = Color.MediumPurple;
-            m_fFriction = 1;
-            m_fMass = 50f;
-            scaleModifier = m_iRadius / defaultRadius;
-            m_fScale *= scaleModifier;
-        }
-
-        public Spell(Texture2D texture, Vector2 position, int radius, Wizard parent)
+        public Spell(Texture2D texture, Vector2 position, int radius, GameObject parent)
             : base(texture, position, radius)
         {
             this.m_texture = texture;
@@ -53,29 +34,30 @@ namespace Wizards.Interfaces
             this.m_vVelocity = new Vector2((float)Math.Cos(m_fAngle), (float)Math.Sin(m_fAngle)) * speed;
             m_vPosition += new Vector2((float)Math.Cos(m_fAngle), (float)Math.Sin(m_fAngle)) * (parent.getRadius() + radius);
 
-            if (Vector2.Dot(Vector2.Normalize(parent.myVelocity), Vector2.Normalize(m_vVelocity)) >= 0.9f)
-            {
-                this.m_vVelocity = parent.myVelocity + new Vector2((float)Math.Cos(m_fAngle), (float)Math.Sin(m_fAngle)) * speed;
-            }
+            //Speed at an angle, Fix
+
+            //if (Vector2.Dot(Vector2.Normalize(parent.myVelocity), Vector2.Normalize(m_vVelocity)) >= 0.9f)
+            //{
+            //    this.m_vVelocity = parent.myVelocity + new Vector2((float)Math.Cos(m_fAngle), (float)Math.Sin(m_fAngle)) * speed;
+            //}
 
             color = Color.MediumPurple;
             m_fFriction = 1;
             m_fMass = 50f;
-            scaleModifier = m_iRadius / defaultRadius;
+            scaleModifier = Math.Min(m_iRadius, defaultRadius) / Math.Max(m_iRadius, defaultRadius);
             m_fScale *= scaleModifier;
+            emitter = new ArcaneEmitter(TextureManager.smooth, m_vPosition, m_iRadius, this);
         }
 
         public override void Update(float time)
         {
-            lifecounter += time;
-            if (lifecounter > lifetime)
-                alive = false;
+            emitter.Update(time);
             base.Update(time);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            base.Draw(spriteBatch);
+            emitter.Draw(spriteBatch);
         }
     }
 }

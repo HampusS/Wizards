@@ -55,19 +55,19 @@ namespace Wizards.Managers
 
         public void HandleSelected()
         {
-            if (KeyMouseReader.keyState.IsKeyDown(Keys.W) || KeyMouseReader.keyState.IsKeyDown(Keys.Up))
+            if (KeyMouseReader.keyState.IsKeyDown(Settings.UpKey1) || KeyMouseReader.keyState.IsKeyDown(Settings.UpKey2))
             {
                 if (bttn_Select < 1)
                     bttn_Select++;
             }
-            else if (KeyMouseReader.keyState.IsKeyDown(Keys.S) || KeyMouseReader.keyState.IsKeyDown(Keys.Down))
+            else if (KeyMouseReader.keyState.IsKeyDown(Settings.DownKey1) || KeyMouseReader.keyState.IsKeyDown(Settings.DownKey2))
             {
                 if (bttn_Select > 0)
                     bttn_Select--;
             }
 
 
-            if (KeyMouseReader.KeyPressed(Keys.Enter) || KeyMouseReader.KeyPressed(Keys.Space))
+            if (KeyMouseReader.KeyPressed(Settings.ActionKey1) || KeyMouseReader.KeyPressed(Settings.ActionKey2))
             {
                 switch (bttn_Select)
                 {

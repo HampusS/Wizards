@@ -42,7 +42,7 @@
     <Compile Include="GameObjects\Environment\Obstacle.cs" />
     <Compile Include="GameObjects\Environment\PickUp.cs" />
     <Compile Include="GameObjects\MovingObject.cs" />
-    <Compile Include="GameObjects\Wizards\AIWizard.cs" />
+    <Compile Include="GameObjects\TimedObject.cs" />
     <Compile Include="GameObjects\GameObject.cs" />
     <Compile Include="GameObjects\Wizards\PlayerWizard.cs" />
     <Compile Include="GUI\TauntText.cs" />
@@ -51,9 +51,11 @@
     <Compile Include="Managers\GamePlayManager.cs" />
     <Compile Include="GameObjects\Spells\Spell.cs" />
     <Compile Include="GameObjects\Wizards\Wizard.cs" />
-    <Compile Include="GameObjects\Spells\FireBall.cs" />
+    <Compile Include="Managers\GUIManager.cs" />
     <Compile Include="Managers\MainMenuManager.cs" />
+    <Compile Include="ParticleEngine\Emitters\ArcaneEmitter.cs" />
     <Compile Include="ParticleEngine\Emitters\Emitter.cs" />
+    <Compile Include="ParticleEngine\Particles\ArcaneParticle.cs" />
     <Compile Include="ParticleEngine\Particles\Particle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,10 +63,7 @@
     <Compile Include="TileGrid\Tile.cs" />
     <Compile Include="Utilities\Animations\Animation.cs" />
     <Compile Include="Utilities\Animations\AnimationController.cs" />
-    <Compile Include="Utilities\Animations\Breathe.cs" />
-    <Compile Include="Utilities\Animations\DeathSequence.cs" />
     <Compile Include="Utilities\Animations\ShockCollision.cs" />
-    <Compile Include="Utilities\Animations\Shoot.cs" />
     <Compile Include="Utilities\Animations\Walk.cs" />
     <Compile Include="Utilities\KeyMouseReader.cs" />
     <Compile Include="Utilities\Pathfinder.cs" />

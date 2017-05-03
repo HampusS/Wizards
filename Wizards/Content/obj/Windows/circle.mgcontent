@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/hampz/OneDrive/VisualStudio/Wizards/Wizards/Content/frame.png</SourceFile>
-  <SourceTime>2017-05-02T13:47:38.0989173+02:00</SourceTime>
-  <DestFile>C:/Users/hampz/OneDrive/VisualStudio/Wizards/Wizards/Content/bin/Windows/frame.xnb</DestFile>
-  <DestTime>2017-05-02T13:48:33.2503032+02:00</DestTime>
+  <SourceFile>C:/Users/hampz/OneDrive/VisualStudio/Wizards/Wizards/Content/circle.png</SourceFile>
+  <SourceTime>2016-06-28T16:05:33+02:00</SourceTime>
+  <DestFile>C:/Users/hampz/OneDrive/VisualStudio/Wizards/Wizards/Content/bin/Windows/circle.xnb</DestFile>
+  <DestTime>2017-05-01T20:28:58.8489636+02:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2016-03-30T08:36:08+02:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

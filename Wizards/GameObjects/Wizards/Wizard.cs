@@ -32,8 +32,7 @@ namespace Wizards.GameObjects
         // ANIMATION 
         AnimationController animations;
 
-        public Vector2 m_vLeftFootPos, m_vRightFootPos,
-            m_vLeftArmPos, m_vRightArmPos;
+        public Vector2 m_vLeftFootPos, m_vRightFootPos;
 
         protected bool isWalking = false;
 
@@ -49,11 +48,20 @@ namespace Wizards.GameObjects
         public bool isBoosted = false;
         protected TauntText defaultTaunt,
             currentTaunt,
-            howBoutDat,
-            SolidAsARock,
-            IFeelTheNeed,
-            SprayAndPray;
+            m_ttHitOpponent,
+            m_ttMassBoost,
+            m_ttSpeedBoost,
+            m_ttAttackBoost;
 
+        public float getMaxStrength()
+        {
+            return m_fStrengthLimit;
+        }
+
+        public float StrengthPercent()
+        {
+            return m_fStrength / m_fStrengthLimit;
+        }
 
         public bool DisplayTaunt
         {
@@ -92,16 +100,16 @@ namespace Wizards.GameObjects
             m_iHP = 3;
             SetPhysics(1, 0.8f);
             m_fStartSpeed = speed;
-            m_fStartInterval = m_fInterval;
+            m_fStartInterval = 0;
             m_fStartMass = m_fMass;
-            m_fStartStrength = m_fStrength;
             defaultTaunt = new TauntText(TextureManager.font, Vector2.Zero, Color.White, "DEFAULT", 2, this);
+            m_ttHitOpponent = new TauntText(TextureManager.font, Vector2.Zero, Color.Red, "How 'bout dat", 2, this);
+            m_ttMassBoost = new TauntText(TextureManager.font, Vector2.Zero, Color.SkyBlue, "Solid As A Rock!", 2, this);
+            m_ttSpeedBoost = new TauntText(TextureManager.font, Vector2.Zero, Color.Yellow, "I Feel the Need..", 2, this);
+            m_ttAttackBoost = new TauntText(TextureManager.font, Vector2.Zero, Color.Red, "Spray 'n Pray", 2, this);
             currentTaunt = defaultTaunt;
-            howBoutDat = new TauntText(TextureManager.font, Vector2.Zero, Color.Red, "How 'bout dat", 2, this);
-            SolidAsARock = new TauntText(TextureManager.font, Vector2.Zero, Color.SkyBlue, "Solid As A Rock!", 2, this);
-            IFeelTheNeed = new TauntText(TextureManager.font, Vector2.Zero, Color.Yellow, "I Feel the Need..", 2, this);
-            SprayAndPray = new TauntText(TextureManager.font, Vector2.Zero, Color.Red, "Spray 'n Pray", 2, this);
             DisplayTaunt = false;
+            m_fStartStrength = m_fStrength;
         }
 
         public override void Update(float time)
@@ -147,24 +155,38 @@ namespace Wizards.GameObjects
                     currentTaunt = defaultTaunt;
                     break;
                 case Taunts.HowBout:
-                    currentTaunt = howBoutDat;
+                    currentTaunt = m_ttHitOpponent;
                     break;
                 case Taunts.Solid:
-                    currentTaunt = SolidAsARock;
+                    currentTaunt = m_ttMassBoost;
                     break;
                 case Taunts.Speed:
-                    currentTaunt = IFeelTheNeed;
+                    currentTaunt = m_ttSpeedBoost;
                     break;
                 case Taunts.Spray:
-                    currentTaunt = SprayAndPray;
+                    currentTaunt = m_ttAttackBoost;
                     break;
             }
         }
 
-        public void AddStrength()
+        public void AddStrength(float strength)
         {
             if (m_fStrength < m_fStrengthLimit)
-                m_fStrength += 0.4f;
+            {
+                m_fStrength += strength;
+                if (m_fStrength > m_fStrengthLimit)
+                    m_fStrength = 1;
+            }
+        }
+
+        public void RemoveStrength()
+        {
+            if (m_fStrength > m_fStrengthLimit * 0.1f)
+            {
+                m_fStrength -= m_fStrengthLimit * 0.1f;
+                if (m_fStrength < m_fStrengthLimit * 0.1f)
+                    m_fStrength = m_fStrengthLimit * 0.1f;
+            }
         }
 
         public void BoostMass()

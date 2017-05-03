@@ -9,9 +9,8 @@ using Wizards.Utilities;
 
 namespace Wizards.GameObjects
 {
-    class MovingObject : GameObject
+    class MovingObject : TimedObject
     {
-
         protected Vector2 m_vVelocity, m_vAcceleration;
 
         protected float m_fFriction = Settings.DefaultFriction;

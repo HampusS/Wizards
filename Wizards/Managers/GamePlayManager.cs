@@ -21,9 +21,7 @@ namespace Wizards.Managers
         Grid grid;
         public PlayerWizard player1, player2;
 
-        TextObject m_toPlayer1, m_toPlayer2,
-            gui_p1Life, gui_p2Life,
-            gui_p1ArcanePower, gui_p2ArcanePower;
+        GUIManager gui;
 
         List<PickUp> pickUps = new List<PickUp>();
         List<Spell> spells = new List<Spell>();
@@ -39,7 +37,7 @@ namespace Wizards.Managers
             AddArcaneObject();
 
             InitializePlayers();
-            SetPlayerGUI();
+            gui = new GUIManager(player1, player2);
             this.window = window;
         }
 
@@ -70,17 +68,12 @@ namespace Wizards.Managers
             }
             player1.Draw(spriteBatch);
             player2.Draw(spriteBatch);
-            m_toPlayer1.Draw(spriteBatch);
-            m_toPlayer2.Draw(spriteBatch);
-            gui_p1Life.Draw(spriteBatch);
-            gui_p2Life.Draw(spriteBatch);
-            gui_p1ArcanePower.Draw(spriteBatch);
-            gui_p2ArcanePower.Draw(spriteBatch);
+            gui.Draw(spriteBatch);
         }
 
         private void AddArcaneObject()
         {
-            pickUps.Add(new PickUp(TextureManager.circle, grid.RandomizePosAwayFromCenter(rnd.Next(2, 10)), Settings.circleRadius, rnd.Next(5, 10), PickUp.myType.ArcaneBoost));
+            pickUps.Add(new PickUp(TextureManager.circle, grid.RandomizePosAwayFromCenter(rnd.Next(2, 10)), Settings.circleRadius, rnd.Next(6, 9), PickUp.myType.ArcaneBoost));
         }
 
         private void AddRandomBooster()
@@ -100,48 +93,27 @@ namespace Wizards.Managers
             }
         }
 
-        private void SetPlayerGUI()
-        {
-            string m_sLife = "Life: ";
-            string m_sPower = "Arcane: ";
-
-            // Player 1
-            m_toPlayer1= new TextObject(TextureManager.font, new Vector2(10, TextureManager.font.MeasureString("Player 1").Y), player1.myColor, "Player 1", 3);
-            gui_p1Life = new TextObject(TextureManager.font, new Vector2(10, TextureManager.font.MeasureString(m_sLife).Y * 4), player1.myColor, m_sLife, 3);
-            gui_p1Life.myAppendedText = player1.myHP.ToString();
-            gui_p1ArcanePower = new TextObject(TextureManager.font, new Vector2(10, TextureManager.font.MeasureString(m_sPower).Y * 6), player1.myColor, m_sPower, 3);
-            gui_p1ArcanePower.myAppendedText = player1.myStrength.ToString();
-
-            // Player 2
-            m_toPlayer2 = new TextObject(TextureManager.font, new Vector2(10, Settings.windowHeight - TextureManager.font.MeasureString("Player 2").Y * 8), player2.myColor, "Player 2", 3);
-            gui_p2Life = new TextObject(TextureManager.font, new Vector2(10, Settings.windowHeight - TextureManager.font.MeasureString(m_sLife).Y * 6), player2.myColor, m_sLife, 3);
-            gui_p2Life.myAppendedText = player2.myHP.ToString();
-            gui_p2ArcanePower = new TextObject(TextureManager.font, new Vector2(10, Settings.windowHeight - TextureManager.font.MeasureString(m_sPower).Y * 4), player2.myColor, m_sPower, 3);
-            gui_p2ArcanePower.myAppendedText = player2.myStrength.ToString();
-        }
-
         private void InitializePlayers()
         {
-            player1 = new PlayerWizard(TextureManager.circle, grid.RandomizePosAwayFromCenter(9), Settings.circleRadius);
+            player1 = new PlayerWizard(TextureManager.circle, grid.RandomizePosAwayFromCenter(Settings.PlayerSpawnRange), Settings.circleRadius);
             player1.TurnToVector(grid.getGridCenter());
-            player1.SetKeyBindings(Keys.Space, Keys.W, Keys.A, Keys.S, Keys.D, Color.LightPink);
+            player1.SetKeyBindings(Settings.ActionKey1, Settings.AlternateKey1, Settings.LeftKey1, Settings.RightKey1, Color.LightPink);
 
-            player2 = new PlayerWizard(TextureManager.circle, grid.RandomizePosAwayFromCenter(9), Settings.circleRadius);
+            player2 = new PlayerWizard(TextureManager.circle, grid.RandomizePosAwayFromCenter(Settings.PlayerSpawnRange), Settings.circleRadius);
             player2.TurnToVector(grid.getGridCenter());
-            player2.SetKeyBindings(Keys.M, Keys.Up, Keys.Left, Keys.Down, Keys.Right, Color.LightGreen);
+            player2.SetKeyBindings(Settings.ActionKey2, Settings.AlternateKey2, Settings.LeftKey2, Settings.RightKey2, Color.LightGreen);
         }
 
-        public void WizardDeathSequence(Wizard obj, TextObject objGUI)
+        public void WizardDeathSequence(Wizard obj)
         {
             if (obj.isInVoid)
             {
-                obj.myPosition = grid.RandomizePosAwayFromCenter(9);
+                obj.myPosition = grid.RandomizePosAwayFromCenter(Settings.PlayerSpawnRange);
                 obj.TurnToVector(grid.getGridCenter());
                 obj.myVelocity *= 0;
                 obj.myHP--;
-
-                objGUI.myAppendedText = obj.myHP.ToString();
                 obj.isInVoid = false;
+                gui.RefreshGUI(player1, player2);
             }
         }
 
@@ -151,7 +123,8 @@ namespace Wizards.Managers
             {
                 if (player.isReadyToShoot())
                 {
-                    spells.Add(new Spell(TextureManager.circle, player.myPosition, 8, player));
+                    spells.Add(new Spell(TextureManager.circle, player.myPosition, (int)(Settings.circleRadius * 0.5f), player));
+                    player.RemoveStrength();
                 }
             }
         }
@@ -165,8 +138,8 @@ namespace Wizards.Managers
                 switch (pup.m_mtType)
                 {
                     case PickUp.myType.ArcaneBoost:
-                        obj.AddStrength();
-                        gui_p1ArcanePower.myAppendedText = player1.myStrength.ToString();
+                        obj.AddStrength(pup.LifePercent());
+                        gui.RefreshGUI(player1, player2);
                         break;
                     case PickUp.myType.MassBoost:
                         obj.BoostMass();
@@ -200,8 +173,8 @@ namespace Wizards.Managers
                 Calculate.SolveToMovingCircleCollision(player1, player2, 1);
             grid.UpdatePlayerTile(player1);
             grid.UpdatePlayerTile(player2);
-            WizardDeathSequence(player1, gui_p1Life);
-            WizardDeathSequence(player2, gui_p2Life);
+            WizardDeathSequence(player1);
+            WizardDeathSequence(player2);
             SpawnPickUps(time);
 
             PlayerShoots(player1);
@@ -222,36 +195,33 @@ namespace Wizards.Managers
 
             foreach (Spell spell in spells)
             {
-                if (spell.getMyParent() != null)
+                if (spell.getMyParent() == player2)
                 {
-                    if (spell.getMyParent() == player2)
+                    if (MovingCollision(player1, spell, Settings.SpellPushBack * player2.StrengthPercent() * spell.LifePercent()))
                     {
-                        if (MovingCollision(player1, spell, player2.myStrength))
-                        {
-                            spell.isAlive = false;
-                            player2.ResetStrength();
-                            gui_p2ArcanePower.myAppendedText = player2.myStrength.ToString();
-                            player2.DisplayTaunt = true;
-                            player2.myTaunts = Wizard.Taunts.HowBout;
-                        }
+                        spell.isAlive = false;
+                        player2.ResetStrength();
+                        gui.RefreshGUI(player1, player2);
+                        player2.DisplayTaunt = true;
+                        player2.myTaunts = Wizard.Taunts.HowBout;
                     }
-                    else if (spell.getMyParent() == player1)
+                }
+                else if (spell.getMyParent() == player1)
+                {
+                    if (MovingCollision(player2, spell, Settings.SpellPushBack * player1.StrengthPercent() * spell.LifePercent()))
                     {
-                        if (MovingCollision(player2, spell, player1.myStrength))
-                        {
-                            spell.isAlive = false;
-                            player1.ResetStrength();
-                            gui_p1ArcanePower.myAppendedText = player1.myStrength.ToString();
-                            player1.DisplayTaunt = true;
-                            player1.myTaunts = Wizard.Taunts.HowBout;
-                        }
+                        spell.isAlive = false;
+                        player1.ResetStrength();
+                        gui.RefreshGUI(player1, player2);
+                        player1.DisplayTaunt = true;
+                        player1.myTaunts = Wizard.Taunts.HowBout;
                     }
                 }
                 else
                 {
-                    if (MovingCollision(player1, spell, 1))
+                    if (MovingCollision(player1, spell, spell.LifePercent()))
                         spell.isAlive = false;
-                    else if (MovingCollision(player2, spell, 1))
+                    else if (MovingCollision(player2, spell, spell.LifePercent()))
                         spell.isAlive = false;
                 }
 
@@ -287,7 +257,7 @@ namespace Wizards.Managers
         {
             pickupTimer += time;
 
-            if (pickupTimer > rnd.Next(8, 15))
+            if (pickupTimer > Settings.BoosterSpawnTime)
             {
                 pickupTimer = 0;
                 AddRandomBooster();
@@ -314,12 +284,11 @@ namespace Wizards.Managers
                 if (Vector2.Distance(player1.myPosition, obj.myPosition) > Vector2.Distance(player2.myPosition, obj.myPosition))
                     tempWiz = player2;
 
-                //Set a range in # of tiles
-                if (obj.isInRange(tempWiz.myPosition, 7))
+                if (obj.isInRange(tempWiz.myPosition, Settings.ObjectShootingRange))
                 {
                     obj.TurnToVector(tempWiz.myPosition);
                     if (obj.isReadyToShoot())
-                        spells.Add(new Spell(TextureManager.circle, obj.myPosition, 16, tempWiz.myPosition));
+                        spells.Add(new Spell(TextureManager.circle, obj.myPosition, (int)(Settings.circleRadius * 0.5f), obj));
                 }
             }
         }

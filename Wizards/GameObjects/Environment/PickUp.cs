@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wizards.ParticleEngine.Emitters;
 using Wizards.Utilities;
 
 namespace Wizards.GameObjects.Environment
 {
-    class PickUp : GameObject
+    class PickUp : TimedObject
     {
         public enum myType
         {
@@ -20,9 +21,7 @@ namespace Wizards.GameObjects.Environment
         }
         public myType m_mtType = myType.ArcaneBoost;
 
-        Random rnd;
-
-        protected float m_fLifeTime, m_fStartLife;
+        ArcaneEmitter emitter;
 
         public PickUp(Texture2D texture, Vector2 position, int radius, int lifeTime, myType type)
             : base(texture, position, radius)
@@ -39,7 +38,7 @@ namespace Wizards.GameObjects.Environment
             scaleModifier = (defaultRadius * 2) / m_texture.Width;
             m_fScale *= scaleModifier;
             m_vOrigin = new Vector2(m_texture.Width / 2, m_texture.Height / 2);
-
+            emitter = new ArcaneEmitter(TextureManager.smooth, m_vPosition, m_iRadius, this);
         }
 
         private void InitializeOnType()
@@ -68,22 +67,34 @@ namespace Wizards.GameObjects.Environment
             }
         }
 
-        private float LifePercent()
-        {
-            return (m_fLifeTime / m_fStartLife);
-        }
-
         public override void Update(float time)
         {
-            m_fLifeTime -= time;
-            if (m_fLifeTime < 0)
-                alive = false;
+            switch (m_mtType)
+            {
+                case myType.ArcaneBoost:
+                    emitter.Update(time);
+                    break;
+            }
             base.Update(time);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(m_texture, m_vPosition, null, color * LifePercent(), m_fAngle, m_vOrigin, m_fScale, SpriteEffects.None, 0);
+            switch (m_mtType)
+            {
+                case myType.ArcaneBoost:
+                    emitter.Draw(spriteBatch);
+                    break;
+                case myType.MassBoost:
+                    spriteBatch.Draw(m_texture, m_vPosition, null, color * LifePercent(), m_fAngle, m_vOrigin, m_fScale, SpriteEffects.None, 0);
+                    break;
+                case myType.RapidFireBoost:
+                    spriteBatch.Draw(m_texture, m_vPosition, null, color * LifePercent(), m_fAngle, m_vOrigin, m_fScale, SpriteEffects.None, 0);
+                    break;
+                case myType.SpeedBoost:
+                    spriteBatch.Draw(m_texture, m_vPosition, null, color * LifePercent(), m_fAngle, m_vOrigin, m_fScale, SpriteEffects.None, 0);
+                    break;
+            }
         }
     }
 }

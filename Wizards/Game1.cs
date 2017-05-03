@@ -47,7 +47,7 @@ namespace Wizards
             // TODO: Add your initialization logic here
             graphics.PreferredBackBufferWidth = Settings.windowWidth;
             graphics.PreferredBackBufferHeight = Settings.windowHeight;
-            graphics.IsFullScreen = true;
+            graphics.IsFullScreen = Settings.FullScreen;
             graphics.ApplyChanges();
             base.Initialize();
         }
@@ -129,7 +129,7 @@ namespace Wizards
                 case GameState.MainMenu:
                     menuManager.Update(time);
 
-                    if (KeyMouseReader.keyState.IsKeyDown(Keys.Escape) && KeyMouseReader.oldKeyState.IsKeyUp(Keys.Escape))
+                    if (KeyMouseReader.keyState.IsKeyDown(Settings.CancelKey) && KeyMouseReader.oldKeyState.IsKeyUp(Settings.CancelKey))
                         Exit();
                     break;
                 case GameState.GamePlay:
@@ -148,11 +148,11 @@ namespace Wizards
                         winner.RefreshOrigin();
                         game = GameState.WinScreen;
                     }
-                    if (KeyMouseReader.keyState.IsKeyDown(Keys.Escape) && KeyMouseReader.oldKeyState.IsKeyUp(Keys.Escape))
+                    if (KeyMouseReader.keyState.IsKeyDown(Settings.CancelKey) && KeyMouseReader.oldKeyState.IsKeyUp(Settings.CancelKey))
                         game = GameState.MainMenu;
                     break;
                 case GameState.WinScreen:
-                    if (KeyMouseReader.keyState.IsKeyDown(Keys.Escape) && KeyMouseReader.oldKeyState.IsKeyUp(Keys.Escape))
+                    if (KeyMouseReader.keyState.IsKeyDown(Settings.CancelKey) && KeyMouseReader.oldKeyState.IsKeyUp(Settings.CancelKey))
                         game = GameState.MainMenu;
                     break;
             }

@@ -12,7 +12,7 @@ namespace Wizards.GameObjects
 {
     class PlayerWizard : Wizard
     {
-        Keys shoot, moveUp, moveLeft, moveDown, moveRight;
+        Keys shoot, moveUp, moveLeft, moveRight;
 
         public override bool isReadyToShoot()
         {
@@ -28,12 +28,11 @@ namespace Wizards.GameObjects
             this.color = Color.Purple;
         }
 
-        public void SetKeyBindings(Keys shoot, Keys moveUp, Keys moveLeft, Keys moveDown, Keys moveRight, Color color)
+        public void SetKeyBindings(Keys shoot, Keys moveUp, Keys moveLeft, Keys moveRight, Color color)
         {
             this.shoot = shoot;
             this.moveUp = moveUp;
             this.moveLeft = moveLeft;
-            this.moveDown = moveDown;
             this.moveRight = moveRight;
             this.color = color;
         }

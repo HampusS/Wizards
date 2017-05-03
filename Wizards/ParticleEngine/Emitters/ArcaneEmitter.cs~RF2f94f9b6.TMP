@@ -1,0 +1,53 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Wizards.ParticleEngine.Particles;
+
+namespace Wizards.ParticleEngine.Emitters
+{
+    class ArcaneEmitter : Emitter
+    {
+        Texture2D texture;
+        Random rand;
+        int size;
+
+        public ArcaneEmitter(Texture2D texture, Vector2 position, int size)
+            : base(position)
+        {
+            this.texture = texture;
+            this.position = position;
+            this.size = size;
+            nrParticles = 1;
+            myLifeTime = 10;
+            rand = new Random();
+        }
+
+        public override void Update(float time)
+        {
+            base.Update(time);
+            //RemoveParticles(time);
+            //EmitParticles();
+
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+        }
+
+        protected override Particle GenerateParticle()
+        {
+            float lifetime = 20 + rand.Next(-5, 10);
+            return new ArcaneParticle(texture, position, lifetime, size);
+        }
+
+        protected override void EmitParticles()
+        {
+            particles.Add(GenerateParticle());
+        }
+    }
+}

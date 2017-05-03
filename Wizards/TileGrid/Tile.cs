@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wizards.Utilities;
 
 namespace Wizards.TileGrid
 {
@@ -68,31 +69,17 @@ namespace Wizards.TileGrid
             this.myType = type;
             if (myType == MyType.Ground)
             {
-                m_fFriction = 0.95f;
+                m_fFriction = Settings.GroundFriction;
                 color = Color.Green;
             }
             else if (myType == MyType.Ice)
             {
-                m_fFriction = 0.98f;
+                m_fFriction = Settings.IceFriction;
                 color = Color.CornflowerBlue;
             }
             else if (myType == MyType.Void)
             {
-                m_fFriction = 0.85f;
                 color = Color.Black;
-            }
-        }
-
-        public void Update()
-        {
-            switch (myType)
-            {
-                case MyType.Ground:
-                    break;
-                case MyType.Ice:
-                    break;
-                case MyType.Void:
-                    break;
             }
         }
 

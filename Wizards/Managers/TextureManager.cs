@@ -12,12 +12,14 @@ namespace Wizards.Utilities
     class TextureManager
     {
         public static Texture2D square, circle, triangle, 
-            hat, solid, flash, dmg, frame;
+            hat, solid, flash, dmg, frame, smooth,
+            solidSquare;
         public static SpriteFont font;
 
         public static void LoadTextures(GraphicsDevice graphicsDevice, ContentManager Content)
         {
-            square = createSolidRectangle(Settings.TileSize, Settings.TileSize, graphicsDevice);
+            square = createTransparentRectangle(Settings.TileSize, Settings.TileSize, graphicsDevice);
+            solidSquare = createSolidRectangle(Settings.TileSize, Settings.TileSize, graphicsDevice);
             circle = createCircleText(graphicsDevice, Settings.circleRadius * 2);
             triangle = createSolidTriangle(Settings.TileSize, (int)(Settings.TileSize * 1.15f), graphicsDevice);
             font = Content.Load<SpriteFont>("font");
@@ -26,6 +28,8 @@ namespace Wizards.Utilities
             flash = Content.Load<Texture2D>("speed");
             dmg = Content.Load<Texture2D>("damage");
             frame = Content.Load<Texture2D>("frame");
+            smooth = Content.Load<Texture2D>("circle");
+
         }
 
         static Texture2D createCircleText(GraphicsDevice graphicsDevice, int radius)
@@ -57,7 +61,7 @@ namespace Wizards.Utilities
             return texture;
         }
 
-        static Texture2D createSolidRectangle(int width, int height, GraphicsDevice graphicsDevice)
+        static Texture2D createTransparentRectangle(int width, int height, GraphicsDevice graphicsDevice)
         {
             Texture2D texture = new Texture2D(graphicsDevice, width, height);
             Color[] data = new Color[width * height];
@@ -82,6 +86,37 @@ namespace Wizards.Utilities
             for (int i = width * height - width; i < width * height; i++)
             {
                 data[i] = Color.White;
+            }
+
+            texture.SetData(data);
+            return texture;
+        }
+
+        static Texture2D createSolidRectangle(int width, int height, GraphicsDevice graphicsDevice)
+        {
+            Texture2D texture = new Texture2D(graphicsDevice, width, height);
+            Color[] data = new Color[width * height];
+
+            // Colour the entire texture.             
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] = Color.White;
+            }
+            for (int i = 0; i < width; i++)
+            {
+                data[i] = Color.DarkGray;
+            }
+            for (int i = 0; i < width * height - width; i += width)
+            {
+                data[i] = Color.DarkGray;
+            }
+            for (int i = width - 1; i < width * height; i += width)
+            {
+                data[i] = Color.DarkGray;
+            }
+            for (int i = width * height - width; i < width * height; i++)
+            {
+                data[i] = Color.DarkGray;
             }
 
             texture.SetData(data);
